@@ -10,12 +10,36 @@
 	<!-- <h1 class="text-center">javascript read file text with AJAX XMLHttpRequest();</h1> -->
 	<div id="gettext"></div>
 	<script>
-	var xhr = new XMLHttpRequest();
-	xhr.open('GET', 'foo.txt');
+	function init_AJAX() {
+		try { return new ActiveXObject ("Msxml2.XMLHTTP"); } catch(e) {}
+		try { return new ActiveXObject ("Microsoft.XMLHTTP"); } catch(e) {}
+		try { return new XMLHttpRequest (); } catch(e) {}
+		alert("XMLHttpRequest not supported");
+		return null;
+	}
+
+	var xhr = init_AJAX();
+	// xhr.open('GET', 'foo.txt');
+	xhr.open('GET', 'test.xml');
 	xhr.onreadystatechange = function() {
-		// alert(xhr.responseText);
-		console.log("xmlhttp Request Accepted");
-		document.getElementById("gettext").innerHTML = xhr.responseText;
+
+		if (xhr.readyState === 4) {
+			if (xhr.status === 200) {
+				console.log("xmlhttp Request Accepted");
+				// document.getElementById("gettext").innerHTML = xhr.responseText;
+				xmlDoc = xhr.responseXML;
+				txt = "";
+				x = xmlDoc.getElementsByTagName("COUNTRY");
+				for (i = 0; i < x.length; i++) {
+					country = x[i].childNodes[0].nodeValue;
+					if (country == 'USA')
+						txt += "<strong style='color:red;'>" + country + "</strong><br>";
+					else
+						txt += country + "<br>";
+				}
+				document.getElementById("gettext").innerHTML = txt;
+			}
+		}
 	}
 	xhr.send();
 	</script>
